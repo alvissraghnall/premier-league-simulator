@@ -1,0 +1,162 @@
+[
+  {
+    "name": "Arsenal",
+    "short": "ARS",
+    "overall": 79,
+    "defence": 83,
+    "midfield": 81,
+    "attack": 77
+  },
+  {
+    "name": "Aston Villa",
+    "short": "AVL",
+    "overall": 78,
+    "defence": 76,
+    "midfield": 77,
+    "attack": 78
+  },
+  {
+    "name": "Brighton and Hove Albion",
+    "short": "BHA",
+    "overall": 76,
+    "defence": 75,
+    "midfield": 77,
+    "attack": 75
+  },
+  {
+    "name": "Burnley",
+    "short": "BUR",
+    "overall": 77,
+    "defence": 76,
+    "midfield": 76,
+    "attack": 77
+  },
+  {
+    "name": "Chelsea",
+    "short": "CHE",
+    "overall": 83,
+    "defence": 84,
+    "midfield": 86,
+    "attack": 81
+  },
+  {
+    "name": "Crystal Palace",
+    "short": "CRY",
+    "overall": 77,
+    "defence": 77,
+    "midfield": 76,
+    "attack": 74
+  },
+  {
+    "name": "Brentford",
+    "short": "BRE",
+    "overall": 73,
+    "defence": 73,
+    "midfield": 74,
+    "attack": 73
+  },
+  {
+    "name": "Everton",
+    "short": "EVE",
+    "overall": 79,
+    "defence": 79,
+    "midfield": 78,
+    "attack": 79
+  },
+  {
+    "name": "Liverpool",
+    "short": "LIV",
+    "overall": 84,
+    "defence": 86,
+    "midfield": 83,
+    "attack": 85
+  },
+  {
+    "name": "Leicester City",
+    "short": " LEI",
+    "overall": 80,
+    "defence": 82,
+    "midfield": 81,
+    "attack": 79
+  },
+  {
+    "name": "Leeds United",
+    "short": "LEE",
+    "overall": 77, 
+    "defence": 78,
+    "midfield": 78,
+    "attack": 76
+  },
+  {
+    "name": "Manchester City",
+    "short": "MCI",
+    "overall": 85,
+    "defence": 85,
+    "midfield": 85,
+    "attack": 86
+  },
+  {
+    "name": "Manchester United",
+    "short": "MUN",
+    "overall": 84,
+    "defence": 85,
+    "midfield": 84,
+    "attack": 83
+  },
+  {
+    "name": "Newcastle United",
+    "short": "NEW",
+    "overall": 76,
+    "defence": 79,
+    "midfield": 75,
+    "attack": 74
+  },
+  {
+    "name": "Norwich",
+    "short": "NOR",
+    "overall": 74,
+    "defence": 76,
+    "midfield": 74,
+    "attack": 74
+  },
+  {
+    "name": "Southampton",
+    "short": "SOU",
+    "overall": 76,
+    "defence": 76,
+    "midfield": 77,
+    "attack": 73
+  },
+  {
+    "name": "Totenham Hotspur",
+    "short": "TOT",
+    "overall": 82,
+    "defence": 86,
+    "midfield": 80,
+    "attack": 80
+  },
+  {
+    "name": "West Ham United",
+    "short": "WHA",
+    "overall": 79,
+    "defence": 79,
+    "midfield": 79,
+    "attack": 79
+  },
+  {
+    "name": "Wolverhampton Wanderers",
+    "short": "WOL",
+    "overall": 78,
+    "defence": 78,
+    "midfield": 81,
+    "attack": 77
+  },
+  {
+    "name": "Watford",
+    "short": "WAT",
+    "overall": 75,
+    "defence": 73,
+    "midfield": 75,
+    "attack": 74
+  }
+]

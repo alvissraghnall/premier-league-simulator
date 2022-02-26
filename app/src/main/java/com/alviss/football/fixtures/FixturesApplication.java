@@ -2,6 +2,12 @@ package com.alviss.football.fixtures;
 
 import java.util.Arrays;
 import java.util.List;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -13,12 +19,19 @@ public class FixturesApplication {
   
   public static String[] teams = new String[20];
   
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException, JsonParseException {
     FixturesApplication app = new FixturesApplication();
-    String teamsFile = "json/teams.json";
+    String teamsFile = "resources/json/teams.json";
     
     InputStream is = app.getFileFromResourceAsStream(teamsFile);
-    printInputStream(is);
+//    printInputStream(is);
+    
+    ObjectMapper objectMapper = new ObjectMapper();
+    Team[] teams = objectMapper.readValue(is, Team[].class);
+    
+    System.out.println(Arrays.deepToString(teams));
+//    JsonFactory jsonFactory = new JsonFactory();
+//    JsonParser jp = jsonFactory.createJsonParser(is);
     
     //System.out.println(Arrays.toString(teams));
     //System.out.println(Arrays.toString(createTeams()));
@@ -28,6 +41,7 @@ public class FixturesApplication {
   private InputStream getFileFromResourceAsStream(String fileName) {
     ClassLoader classLoader = getClass().getClassLoader();
     InputStream inputStream = classLoader.getResourceAsStream(fileName);
+//    System.out.println(FixturesApplication.class.);
   
     if (inputStream == null) {
       throw new IllegalArgumentException("file not found! " + fileName);
@@ -55,6 +69,7 @@ public class FixturesApplication {
     return teams;
   }
   
+ 
   //public List<String> makeFixtures() {
     
   //}

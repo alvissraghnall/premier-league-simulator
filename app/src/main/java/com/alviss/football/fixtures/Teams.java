@@ -2,12 +2,14 @@ package com.alviss.football.fixtures;
 
 
 class Team {
-	String name;
-	String shortName;
-	int overall;
-	int defence;
-	int midfield;
-	int attack;
+	private String name;
+	private String shortName;
+	private int overall;
+	private int defence;
+	private int midfield;
+	private int attack;
+	
+	
 	String getName() {
 		return name;
 	}

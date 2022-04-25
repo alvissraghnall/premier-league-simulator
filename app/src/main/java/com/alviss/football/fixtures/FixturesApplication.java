@@ -1,6 +1,8 @@
 package com.alviss.football.fixtures;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -30,6 +32,9 @@ public class FixturesApplication {
     Team[] teams = objectMapper.readValue(is, Team[].class);
     
     System.out.println(Arrays.deepToString(teams));
+    System.out.println(teams[0].getAttack());
+    
+    app.makeFixtures(teams);
 //    JsonFactory jsonFactory = new JsonFactory();
 //    JsonParser jp = jsonFactory.createJsonParser(is);
     
@@ -61,16 +66,56 @@ public class FixturesApplication {
       e.printStackTrace();
     }
   }
-  
-  private static String[] createTeams(){
-    for(int i = 0, j = 1; i < teams.length; ++i, j++) {
-      teams[i] = "Team " + j;
-    }
-    return teams;
-  }
+//  
+//  private static String[] createTeams(){
+//    for(int i = 0, j = 1; i < teams.length; ++i, j++) {
+//      teams[i] = "Team " + j;
+//    }
+//    return teams;
+//  }
+//  
   
  
-  //public List<String> makeFixtures() {
-    
-  //}
+  public List<String> makeFixtures(Team[] teams) {
+	  List<String> teamsList = new ArrayList<>();
+	  List<HashMap<String, String>> fixtures = new ArrayList<>();
+
+	  for(Team team : teams) {
+		  teamsList.add(team.getName());
+	  }
+	  int length = teamsList.size();
+	  byte numOfDays = (byte) (length - 1);
+	  byte roundRobin = (byte) (numOfDays * 2);
+	  byte matchesPerRound = (byte) (length / 2);
+	  String constantTeam = teamsList.remove(0);
+	  
+	  for(byte day = 0; day < numOfDays; day++) {
+		  System.out.println("=====================================");
+		  System.out.println(String.format("Day %d", day + 1));
+		  HashMap<String, String> roundFixes = new HashMap<String, String>();;
+		  for(int match = 0; match < matchesPerRound; ++match) {
+			  String home = teamsList.get(match - day);
+			  String away = teamsList.get(length - 1 - day - match);
+			  if(match == 9) home = constantTeam;
+			 
+			  roundFixes.put("home", home);
+			  roundFixes.put("away", away);
+//			  if(day < numOfDays) {
+//				  System.out.println(String.format("%s vs %s", teamsList.get(home), teamsList.get(away)));
+//			  } else {
+//					System.out.println(String.format("%s vs %s", teamsList.get(away), teamsList.get(home)));;
+//			  }
+			  
+		  }
+		  fixtures.add(roundFixes);
+		  roundFixes.clear();
+		  System.out.println("=====================================");
+	  }
+	  
+	  
+	  
+	  System.out.println(teamsList.toString());
+	  System.out.println(fixtures.toString());
+	  return List.of("Hello!");
+  }
 }

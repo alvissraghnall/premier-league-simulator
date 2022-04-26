@@ -78,12 +78,12 @@ public class FixturesApplication {
  
   public List<String> makeFixtures(Team[] teams) {
 	  List<String> teamsList = new ArrayList<>();
-	  List<HashMap<String, String>> fixtures = new ArrayList<>();
+	  List<List<HashMap<String, String>>> fixtures = new ArrayList<>();
 
 	  for(Team team : teams) {
 		  teamsList.add(team.getName());
 	  }
-	  int length = teamsList.size();
+	  int length = teamsList.size() - 1;
 	  byte numOfDays = (byte) (length - 1);
 	  byte roundRobin = (byte) (numOfDays * 2);
 	  byte matchesPerRound = (byte) (length / 2);
@@ -91,12 +91,16 @@ public class FixturesApplication {
 	  
 	  for(byte day = 0; day < numOfDays; day++) {
 		  System.out.println("=====================================");
+		  List<HashMap<String, String>> matchDay = new ArrayList<>();
 		  System.out.println(String.format("Day %d", day + 1));
-		  HashMap<String, String> roundFixes = new HashMap<String, String>();;
 		  for(int match = 0; match < matchesPerRound; ++match) {
-			  String home = teamsList.get(match - day);
-			  String away = teamsList.get(length - 1 - day - match);
+			  String home = teamsList.get(match - day >= 0 ? match - day : match - day + 19);
+			  String away = teamsList.get(length - 1 - day - match >= 0 ? length - 1 - day - match : length - 1 - day - match + 19);
+//			  String away = teamsList.get(match);
 			  if(match == 9) home = constantTeam;
+			  
+
+			  HashMap<String, String> roundFixes = new HashMap<String, String>();;
 			 
 			  roundFixes.put("home", home);
 			  roundFixes.put("away", away);
@@ -105,15 +109,17 @@ public class FixturesApplication {
 //			  } else {
 //					System.out.println(String.format("%s vs %s", teamsList.get(away), teamsList.get(home)));;
 //			  }
+			  matchDay.add(roundFixes);
+//			  roundFixes.clear();
 			  
 		  }
-		  fixtures.add(roundFixes);
-		  roundFixes.clear();
 		  System.out.println("=====================================");
+		  System.out.println(matchDay.toString());
+		  fixtures.add(matchDay);
 	  }
 	  
 	  
-	  
+	  System.out.println(fixtures.size());
 	  System.out.println(teamsList.toString());
 	  System.out.println(fixtures.toString());
 	  return List.of("Hello!");

@@ -1,3 +1,13 @@
 /bin/
 /target/
 .classpath
+node_modules
+.idea
+*.iml
+*.iws
+*.ipr
+
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target
+
+*.properties

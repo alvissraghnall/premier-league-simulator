@@ -1,0 +1,27 @@
+{
+  "name": "premier-league-simulator",
+  "version": "1.0.0",
+  "description": "Simple Premier League Simulator Application",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "tw": "npx tailwindcss -i styles/index.css -o ./app/src/main/resources/static/css/main.css",
+    "tw:watch": "npx tailwindcss -i styles/index.css -o ./app/src/main/resources/static/css/main.css --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alvissraghnall/premier-league-simulator.git"
+  },
+  "author": "Alviss Raghnall",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alvissraghnall/premier-league-simulator/issues"
+  },
+  "homepage": "https://github.com/alvissraghnall/premier-league-simulator#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.2.4"
+  }
+}

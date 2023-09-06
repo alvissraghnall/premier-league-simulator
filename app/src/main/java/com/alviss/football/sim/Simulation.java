@@ -149,7 +149,7 @@ public class Simulation {
 //
 //        if (awayScore >= 3 && awayScore > homeScore + 2 && away.getAttack() > 80) {
 //            awayScore = ThreadLocalRandom.current().nextInt(homeScore, awayScore);
-//        }
+//        }  
 //
 //        // Put the scores into a Map
 //        matchScore.put(home, homeScore);

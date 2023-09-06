@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>premier-league-simulator</name>
-	<comment></comment>
+	<comment>Parent pom providing dependency and plugin management for applications built with Maven. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
 	<projects>
 	</projects>
 	<buildSpec>
@@ -12,6 +12,11 @@
 		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.springframework.ide.eclipse.boot.validation.springbootbuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -28,7 +33,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1682199864051</id>
+			<id>1693961052136</id>
 			<name></name>
 			<type>30</type>
 			<matcher>

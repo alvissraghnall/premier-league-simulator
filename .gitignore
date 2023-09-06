@@ -10,7 +10,7 @@ node_modules
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target
 
-*.properties
+# *.properties
 /app/src/main/java/com/alviss/football/sim/Sim.ijs
 /app/src/test/resources/
 /app/src/main/resources/static/css/main.css

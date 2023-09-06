@@ -3,22 +3,15 @@ package com.alviss.football.fixtures;
 import java.util.*;
 
 import com.alviss.football.sim.Result;
-import com.alviss.football.sim.Simulation;
 //import com.fasterxml.jackson.core.JsonParseException;
 import com.alviss.football.sim.SimulationApplication;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.io.BufferedReader;
 import java.io.IOException;
 
 @Component

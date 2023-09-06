@@ -39,14 +39,20 @@ public class LeagueTable {
                 if (homeScore > awayScore) {
                     homeTeamData.setWins(homeTeamData.getWins() + 1);
                     homeTeamData.setPoints(homeTeamData.getPoints() + 3);
-                    homeTeamData.getForm().add(Form.W);
+                    FixedSizeDeque<Form> form = homeTeamData.getForm();
+                    form.add(Form.W);
+                    homeTeamData.setForm(form);
                 } else if (homeScore == awayScore) {
                     homeTeamData.setDraws(homeTeamData.getDraws() + 1);
                     homeTeamData.setPoints(homeTeamData.getPoints() + 1);
-                    homeTeamData.getForm().add(Form.D);
+                    FixedSizeDeque<Form> form = homeTeamData.getForm();
+                    form.add(Form.D);
+                    homeTeamData.setForm(form);
                 } else {
                     homeTeamData.setLosses(homeTeamData.getLosses() + 1);
-                    homeTeamData.getForm().add(Form.L);
+                    FixedSizeDeque<Form> form = homeTeamData.getForm();
+                    form.add(Form.L);
+                    homeTeamData.setForm(form);
                 }
                 // update away team data (similar to home team data)
                 LeagueData awayTeamData = teamDataMap.computeIfAbsent(awayTeam, k -> new LeagueData());
@@ -57,14 +63,20 @@ public class LeagueTable {
                 if (awayScore > homeScore) {
                     awayTeamData.setWins(awayTeamData.getWins() + 1);
                     awayTeamData.setPoints(awayTeamData.getPoints() + 3);
-                    awayTeamData.getForm().add(Form.W);
+                    FixedSizeDeque<Form> form = awayTeamData.getForm();
+                    form.add(Form.W);
+                    awayTeamData.setForm(form);
                 } else if (homeScore == awayScore) {
                     awayTeamData.setDraws(awayTeamData.getDraws() + 1);
                     awayTeamData.setPoints(awayTeamData.getPoints() + 1);
-                    awayTeamData.getForm().add(Form.D);
+                    FixedSizeDeque<Form> form = awayTeamData.getForm();
+                    form.add(Form.D);
+                    awayTeamData.setForm(form);
                 } else {
                     awayTeamData.setLosses(awayTeamData.getLosses() + 1);
-                    awayTeamData.getForm().add(Form.L);
+                    FixedSizeDeque<Form> form = awayTeamData.getForm();
+                    form.add(Form.L);
+                    awayTeamData.setForm(form);
                 }
             }
         }

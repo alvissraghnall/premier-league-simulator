@@ -10,6 +10,7 @@ public class LeagueData {
     private int goalsAgainst;
     private int goalsDifference;
     private int points;
+    private FixedSizeDeque<Form> form = new FixedSizeDeque<>(5);
 
     public int getPlayed() {
         return played;
@@ -79,10 +80,57 @@ public class LeagueData {
         return form;
     }
 
-    private void setForm(FixedSizeDeque<Form> form) {
+    public void setForm (FixedSizeDeque<Form> form) {
         this.form = form;
     }
 
-    private FixedSizeDeque<Form> form = new FixedSizeDeque<>(5);
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + played;
+        result = prime * result + wins;
+        result = prime * result + draws;
+        result = prime * result + losses;
+        result = prime * result + goalsFor;
+        result = prime * result + goalsAgainst;
+        result = prime * result + goalsDifference;
+        result = prime * result + points;
+        result = prime * result + ((form == null) ? 0 : form.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LeagueData other = (LeagueData) obj;
+        if (played != other.played)
+            return false;
+        if (wins != other.wins)
+            return false;
+        if (draws != other.draws)
+            return false;
+        if (losses != other.losses)
+            return false;
+        if (goalsFor != other.goalsFor)
+            return false;
+        if (goalsAgainst != other.goalsAgainst)
+            return false;
+        if (goalsDifference != other.goalsDifference)
+            return false;
+        if (points != other.points)
+            return false;
+        if (form == null) {
+            if (other.form != null)
+                return false;
+        } else if (!form.equals(other.form))
+            return false;
+        return true;
+    }
 
 }

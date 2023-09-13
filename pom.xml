@@ -14,7 +14,7 @@
     <sourceDirectory>app/src/main/java</sourceDirectory>
     <resources>
       <resource>
-        <directory>app/src/main/java</directory>
+        <directory>app/src/main/resources</directory>
         <excludes>
           <exclude>**/*.java</exclude>
         </excludes>

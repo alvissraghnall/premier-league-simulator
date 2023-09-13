@@ -56,6 +56,7 @@ public class HomeService {
             data.setWins(teamData.getWins());
             data.setLosses(teamData.getLosses());
             data.setPlayed(teamData.getPlayed());
+            data.setForm(teamData.getForm());
             teamDataList.add(data);
         }
         return teamDataList;

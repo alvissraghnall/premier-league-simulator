@@ -1,5 +1,5 @@
 # Build Tailwind stage
-FROM node:14 AS build-tailwind
+FROM node:18 AS build-tailwind
 WORKDIR /total
 COPY package*.json ./
 RUN npm install

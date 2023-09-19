@@ -9,6 +9,7 @@ RUN npm run tw
 # Build Java stage
 FROM maven:3.9.0-eclipse-temurin-17-alpine AS build-java
 WORKDIR /total
+COPY --from=build-tailwind /total/package-lock.json pckg.json
 # Copy the Maven project file(s) and download dependencies
 # Copy the application source code and build the JAR
 RUN mvn clean package

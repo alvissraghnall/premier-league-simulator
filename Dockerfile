@@ -28,6 +28,6 @@ WORKDIR /total
 # Copy the application source code
 COPY --from=build-java /total/target/*.jar app.jar
 
-RUN cat app/src/main/resources/static/css/main.css
+RUN cat /total/app/src/main/resources/static/css/main.css
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar","app.jar"]

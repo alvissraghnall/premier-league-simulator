@@ -5,7 +5,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run tw
-COPY app/src/main/resources app/src/main/resources
+COPY app/src/main/resources /total/app/src/main/resources
 # RUN cat app/src/main/resources/static/css/main.css
 
 # Build Java stage

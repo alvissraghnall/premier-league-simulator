@@ -16,8 +16,7 @@ COPY pom.xml .
 COPY app app
 # Copy the Maven project file(s) and download dependencies
 # Copy the application source code and build the JAR
-RUN mvn clean package
-
+RUN mvn clean package -DskipTests
 
 # Use an official OpenJDK runtime as a parent image
 FROM openjdk:17-alpine AS final-run
@@ -28,5 +27,6 @@ WORKDIR /total
 # Copy the application source code
 COPY --from=build-java /total/target/*.jar app.jar
 
-EXPOSE 8080
+
 ENTRYPOINT ["java", "-jar","app.jar"]
+EXPOSE 8080

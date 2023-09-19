@@ -6,7 +6,7 @@ RUN npm install
 COPY . .
 RUN npm run tw
 COPY app/src/main/resources app/src/main/resources
-RUN cat app/src/main/resources/static/css/main.css
+# RUN cat app/src/main/resources/static/css/main.css
 
 # Build Java stage
 FROM maven:3.9.0-eclipse-temurin-17-alpine AS build-java
@@ -28,6 +28,6 @@ WORKDIR /total
 # Copy the application source code
 COPY --from=build-java /total/target/*.jar app.jar
 
-
-ENTRYPOINT ["java", "-jar","app.jar"]
+RUN cat app/src/main/resources/static/css/main.css
 EXPOSE 8080
+ENTRYPOINT ["java", "-jar","app.jar"]

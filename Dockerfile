@@ -12,7 +12,7 @@ WORKDIR /total
 COPY --from=build-tailwind /total/package-lock.json pckg.json
 COPY pom.xml .
 # Copy the application source code and build the JAR
-COPY src src
+COPY app app
 # Copy the Maven project file(s) and download dependencies
 # Copy the application source code and build the JAR
 RUN mvn clean package

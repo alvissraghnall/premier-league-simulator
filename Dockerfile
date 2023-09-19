@@ -6,6 +6,7 @@ RUN npm install
 COPY . .
 RUN npm run tw
 COPY app/src/main/resources app/src/main/resources
+CMD cat app/src/main/resources/static/css/main.css
 
 # Build Java stage
 FROM maven:3.9.0-eclipse-temurin-17-alpine AS build-java

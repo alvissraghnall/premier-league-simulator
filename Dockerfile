@@ -1,9 +1,12 @@
+WORKDIR /total
+COPY . .
+
 # Build Tailwind stage
 FROM node:14 AS build-tailwind
 WORKDIR /total
 COPY package*.json ./
 RUN npm install
-COPY . .
+
 RUN npm run tw
 
 # Build Java stage

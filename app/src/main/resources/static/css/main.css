@@ -592,6 +592,10 @@ video {
   height: 0.75rem;
 }
 
+.min-h-screen {
+  min-height: 100vh;
+}
+
 .w-full {
   width: 100%;
 }
@@ -827,6 +831,12 @@ video {
   .dark\:focus\:ring-gray-500:focus {
     --tw-ring-opacity: 1;
     --tw-ring-color: rgb(107 114 128 / var(--tw-ring-opacity));
+  }
+}
+
+@media not all and (min-width: 768px) {
+  .max-md\:leading-\[4rem\] {
+    line-height: 4rem;
   }
 }
 

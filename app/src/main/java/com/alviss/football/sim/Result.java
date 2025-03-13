@@ -7,28 +7,27 @@ import com.alviss.football.fixtures.Match;
 
 public class Result {
 
-    private Match match;
+  private Match match;
 
-    private Map<Team, Integer> score;
+  private Map<Team, Integer> score;
 
-    public Result(Match match, Map<Team, Integer> score) {
-        this.match = match;
-        this.score = score;
-    }
+  private Statistics stats;
 
-    public Match getMatch() {
-        return match;
-    }
+  public Result(Match match, Map<Team, Integer> score, Statistics stats) {
+    this.match = match;
+    this.score = score;
+    this.stats = stats;
+  }
 
-    void setMatch(Match match) {
-        this.match = match;
-    }
+  public Match getMatch() {
+    return match;
+  }
 
-    public Map<Team, Integer> getScore() {
-        return score;
-    }
+  public Map<Team, Integer> getScore() {
+    return score;
+  }
 
-    void setScore(Map<Team, Integer> score) {
-        this.score = score;
-    }
+  public Statistics getStats() {
+    return stats;
+  }
 }

@@ -2,76 +2,6 @@ package com.alviss.football.sim;
 
 import com.alviss.football.fixtures.Team;
 
-/**
- *
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class Simulation {
-
-    private Team home;
-    private Team away;
-    private List<Integer> goalsList;
-
-    public Simulation(Team home, Team away) {
-        this.home = home;
-        this.away = away;
-        this.goalsList = generateGoalsList();
-    }
-
-    private List<Integer> generateGoalsList() {
-        List<Integer> goalsList = new ArrayList<>();
-        for (int i = 0; i < 11; i++) {
-            for (int j = 0; j < 10 - i; j++) {
-                goalsList.add(i);
-            }
-        }
-        Collections.shuffle(goalsList);
-        return goalsList;
-    }
-
-    private int generateBase() {
-        return (int) (Math.random() * goalsList.size());
-    }
-
-    private int adjustScore(int score, int attack, int defense) {
-        int adjustment = 0;
-        if (attack > defense + 5) {
-            if (score <= 1) {
-                adjustment = 1;
-            } else if (score >= 9) {
-                adjustment = -1;
-            }
-        } else if (defense > attack + 5) {
-            if (score >= 3) {
-                adjustment = -1;
-            } else if (score <= 1) {
-                adjustment = 1;
-            }
-        } else if (score >= 5 && attack < 79) {
-            adjustment = -1;
-        }
-        return score + adjustment;
-    }
-
-    public Map<Team, Integer> computeScore() {
-        Map<Team, Integer> matchScore = new HashMap<>();
-        int homeScore = goalsList.get(generateBase());
-        int awayScore = goalsList.get(generateBase());
-
-        homeScore = adjustScore(homeScore, home.getAttack(), away.getDefence());
-        awayScore = adjustScore(awayScore, away.getAttack(), home.getDefence());
-
-        matchScore.put(home, homeScore);
-        matchScore.put(away, awayScore);
-
-        return matchScore;
-    }
-}
-*/
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,120 +10,250 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Simulation {
 
-    private Team home;
-    private Team away;
-    private int[] goalsList;
+  private Team home;
+  private Team away;
+  private int[] goalDistribution;
+  private Random random;
+  private static final double HOME_ADVANTAGE = 1.2;
 
-    public Simulation (Team home, Team away) {
-        this.home = home;
-        this.away = away;
-//        goalsList = this.generateGoalsList();
+  public Simulation(Team home, Team away) {
+    this.home = home;
+    this.away = away;
+    this.goalDistribution = generateGoalDistribution();
+    this.random = new Random();
+  }
+
+  /**
+   * Generates a realistic distribution of possible goal outcomes
+   * Based on historical football match data
+   */
+  private int[] generateGoalDistribution() {
+    // Goals distribution is weighted based on frequency in real matches
+    // 0 goals: ~15%, 1 goal: ~25%, 2 goals: ~30%, 3 goals: ~20%, 4+ goals: ~10%
+    int[] zeroGoals = new int[15];
+    int[] oneGoal = new int[25];
+    int[] twoGoals = new int[30];
+    int[] threeGoals = new int[20];
+    int[] fourGoals = new int[7];
+    int[] fiveGoals = new int[2];
+    int[] sixGoals = new int[1];
+
+    Arrays.fill(oneGoal, 1);
+    Arrays.fill(twoGoals, 2);
+    Arrays.fill(threeGoals, 3);
+    Arrays.fill(fourGoals, 4);
+    Arrays.fill(fiveGoals, 5);
+    Arrays.fill(sixGoals, 6);
+
+    return concatArrays(zeroGoals, oneGoal, twoGoals, threeGoals, fourGoals, fiveGoals, sixGoals);
+  }
+
+  /**
+   * Utility method to concatenate multiple arrays
+   */
+  private int[] concatArrays(int[] first, int[]... rest) {
+    int totalLength = first.length;
+    for (int[] arr : rest) {
+      totalLength += arr.length;
+    }
+    int[] result = Arrays.copyOf(first, totalLength);
+    int offset = first.length;
+
+    for (int[] array : rest) {
+      System.arraycopy(array, 0, result, offset, array.length);
+      offset += array.length;
+    }
+    return result;
+  }
+
+  /**
+   * Calculates expected goals (xG) based on team stats
+   * 
+   * @param attacking Team doing the attacking
+   * @param defending Team doing the defending
+   * @param isHome    Whether the attacking team is playing at home
+   * @return Expected goals value
+   */
+  private double calculateExpectedGoals(Team attacking, Team defending, boolean isHome) {
+    // Base xG calculated from attack vs defense ratings
+    double baseXg = (attacking.getAttack() / (double) defending.getDefence()) * 1.5;
+
+    // Adjust for home advantage
+    if (isHome) {
+      baseXg *= HOME_ADVANTAGE;
     }
 
-    private int[] generateGoalsList () {
-        int[] zeroList = new int[10];
-        int[] oneList = new int[20];
-        int[] twoList = new int[30];
-        int[] threeList = new int[25];
-        int[] fourList = new int[10];
-        int[] fiveList = new int[4];
-        int[] sixList = new int[1];
+    // Midfield influence on chance creation
+    double midfieldFactor = attacking.getMidfield() / 100.0 * 0.5;
 
-        Arrays.fill(oneList, 1);
-        Arrays.fill(twoList, 2);
-        Arrays.fill(threeList, 3);
-        Arrays.fill(fourList, 4);
-        Arrays.fill(fiveList, 5);
-        Arrays.fill(sixList, 6);
+    // Team quality overall factor
+    double qualityFactor = attacking.getOverall() / 100.0 * 0.3;
 
-        return (int[]) concatArrays(zeroList, oneList, twoList, threeList, fourList, fiveList, sixList);
+    // Random variance to simulate match day form
+    double formVariance = 0.7 + (random.nextDouble() * 0.6);
+
+    return baseXg * (1 + midfieldFactor + qualityFactor) * formVariance;
+  }
+
+  /**
+   * Converts expected goals to actual goals using Poisson-like distribution
+   * 
+   * @param xG Expected goals
+   * @return Actual goals scored
+   */
+  private int convertExpectedGoalsToActual(double xG) {
+    // Base from our distribution
+    int baseIndex = random.nextInt(goalDistribution.length);
+    int baseGoals = goalDistribution[baseIndex];
+
+    // Modify based on xG
+    if (xG > 2.5 && baseGoals < 2) {
+      // High xG teams are more likely to score more
+      baseGoals += 1;
+    } else if (xG < 0.8 && baseGoals > 2) {
+      // Low xG teams are less likely to score many
+      baseGoals -= 1;
     }
 
-    private  int[] concatArrays (int[] first, int[]... rest) {
-        int totalLength = first.length;
-        for (int[] arr : rest) {
-            totalLength += arr.length;
-        }
-        int[] result = Arrays.copyOf(first, totalLength);
-        int offset = first.length;
+    // Ensure non-negative
+    return Math.max(0, baseGoals);
+  }
 
-        for (int[] array : rest ) {
-            System.arraycopy(array, 0, result, offset, array.length);
-            offset += array.length;
-        }
-        return result;
+  /**
+   * Simulates special events like red cards, injuries, etc.
+   * 
+   * @return A map with event types and their effects
+   */
+  private Map<String, Double> simulateSpecialEvents() {
+    Map<String, Double> events = new HashMap<>();
+
+    // 5% chance of red card
+    if (random.nextDouble() < 0.05) {
+      // Determine which team gets the red card (slightly higher for away team)
+      boolean homeTeamCard = random.nextDouble() > 0.55;
+      String key = homeTeamCard ? "homeRedCard" : "awayRedCard";
+      // Reduction factor for the team with red card
+      events.put(key, 0.7); // 30% reduction in effectiveness
     }
 
-    private int generateBase () {
-        return ThreadLocalRandom.current().nextInt(0, goalsList.length);
+    // 10% chance of weather impact
+    if (random.nextDouble() < 0.1) {
+      // Bad weather reduces scoring
+      events.put("weatherImpact", 0.85);
     }
 
-//    public Map<Team, Integer> computeScore () {
-//        HashMap<Team, Integer> matchScore = new HashMap<>();
-//        int[] bases = new int[] {generateBase(), generateBase()};
-//        int homeScore = goalsList[bases[0]];
-//        int awayScore = goalsList[bases[1]];
-//
-//        // Add weight based on team's attack and defence ratings
-//        homeScore = (int) Math.round(homeScore * (home.getAttack() + away.getDefence()) / 100.0);
-//        awayScore = (int) Math.round(awayScore * (away.getAttack() + home.getDefence()) / 100.0);
-//
-//        // Add weight based on team's midfield ratings
-//        homeScore += (int) Math.round(homeScore * home.getMidfield() / 100.0);
-//        awayScore += (int) Math.round(awayScore * away.getMidfield() / 100.0);
-//
-//        // Apply additional conditions to make the score more realistic
-//        if (homeScore >= 3 && homeScore > awayScore + 2 && home.getAttack() > 80) {
-//            homeScore = ThreadLocalRandom.current().nextInt(awayScore, homeScore);
-//        }
-//
-//        if (awayScore >= 3 && awayScore > homeScore + 2 && away.getAttack() > 80) {
-//            awayScore = ThreadLocalRandom.current().nextInt(homeScore, awayScore);
-//        }  
-//
-//        // Put the scores into a Map
-//        matchScore.put(home, homeScore);
-//        matchScore.put(away, awayScore);
-//
-//        return matchScore;
-//    }
+    return events;
+  }
 
-    public int computeScore(Team home, Team away) {
-        Random rand = new Random();
-        int score = 0;
+  /**
+   * Main method to simulate and compute the match score
+   * 
+   * @return Map containing the score for each team
+   */
+  public Map<Team, Integer> computeScore() {
+    Map<Team, Integer> matchScore = new HashMap<>();
 
-        // Calculate weights for each stat based on strength of opposing defense
-        double homeDefWeight = 0.3 + (0.1 * (10 - away.getDefence())); // Increase defense weight for home team if away team has weak defense
-        double homeAttWeight = 0.1 + (0.1 * home.getAttack()) - (0.05 * (10 - away.getDefence())); // Adjust attack weight for home team based on strength of away team's defense
-        double awayDefWeight = 0.3 + (0.1 * (10 - home.getDefence())); // Increase defense weight for away team if home team has weak defense
-        double awayAttWeight = 0.1 + (0.1 * away.getAttack()) - (0.05 * (10 - home.getDefence())); // Adjust attack weight for away team based on strength of home team's defense
+    // Calculate expected goals
+    double homeXG = calculateExpectedGoals(home, away, true);
+    double awayXG = calculateExpectedGoals(away, home, false);
 
-        // Calculate total weight for each team
-        double homeWeight = home.getOverall() * 0.4 + homeDefWeight * 0.3 + home.getMidfield() * 0.2 + homeAttWeight * 0.1;
-        double awayWeight = away.getOverall() * 0.4 + awayDefWeight * 0.3 + away.getMidfield() * 0.2 + awayAttWeight * 0.1;
-        double totalWeight = homeWeight + awayWeight;
+    // Simulate special events
+    Map<String, Double> events = simulateSpecialEvents();
 
-        int randomNum = rand.nextInt((int) totalWeight);
-
-        if (randomNum < homeWeight) {
-            score += rand.nextInt(4) + 2;
-        }
-        if (randomNum >= homeWeight && randomNum < totalWeight) {
-            score += rand.nextInt(4) + 1;
-        }
-
-        return score;
+    // Apply special event modifiers
+    if (events.containsKey("homeRedCard")) {
+      homeXG *= events.get("homeRedCard");
+    }
+    if (events.containsKey("awayRedCard")) {
+      awayXG *= events.get("awayRedCard");
+    }
+    if (events.containsKey("weatherImpact")) {
+      homeXG *= events.get("weatherImpact");
+      awayXG *= events.get("weatherImpact");
     }
 
+    // Convert to actual goals
+    int homeGoals = convertExpectedGoalsToActual(homeXG);
+    int awayGoals = convertExpectedGoalsToActual(awayXG);
 
-
-    public Map<Team, Integer> getScore () {
-        HashMap<Team, Integer> matchScore = new HashMap<>();
-        int homeScore = computeScore(home, away);
-        int awayScore = computeScore(away, home);
-
-        matchScore.put(home, homeScore);
-        matchScore.put(away, awayScore);
-        return matchScore;
+    // High-scoring match adjustment (makes high-scoring matches more realistic)
+    if (homeGoals + awayGoals > 7) {
+      // Extremely high-scoring matches are rare
+      int totalGoalsAdjustment = random.nextInt(3);
+      if (homeGoals > awayGoals) {
+        homeGoals -= totalGoalsAdjustment;
+      } else {
+        awayGoals -= totalGoalsAdjustment;
+      }
     }
+
+    // Return the final score
+    matchScore.put(home, Math.max(0, homeGoals));
+    matchScore.put(away, Math.max(0, awayGoals));
+
+    return matchScore;
+  }
+
+  /**
+   * Simulates multiple matches between these teams and returns average score
+   * Useful for season predictions
+   * 
+   * @param numberOfSimulations Number of matches to simulate
+   * @return Average scores for both teams
+   */
+  public Map<Team, Double> simulateMultipleMatches(int numberOfSimulations) {
+    Map<Team, Double> averageScores = new HashMap<>();
+    int totalHomeGoals = 0;
+    int totalAwayGoals = 0;
+
+    for (int i = 0; i < numberOfSimulations; i++) {
+      Map<Team, Integer> matchResult = computeScore();
+      totalHomeGoals += matchResult.get(home);
+      totalAwayGoals += matchResult.get(away);
+    }
+
+    averageScores.put(home, totalHomeGoals / (double) numberOfSimulations);
+    averageScores.put(away, totalAwayGoals / (double) numberOfSimulations);
+
+    return averageScores;
+  }
+
+  /**
+   * Returns match statistics beyond just the score
+   * 
+   * @return Statistics with various match statistics
+   */
+  public Statistics getMatchStatistics() {
+    // Map<String, Object> stats = new HashMap<>();
+
+    // Base possession on midfield ratings
+    double totalMidfield = home.getMidfield() + away.getMidfield();
+    int homePossession = (int) Math.round((home.getMidfield() / totalMidfield) * 100);
+
+    // Shots based on attack ratings and possession
+    int homeShots = 5 + (int) (home.getAttack() / 10.0) + (homePossession > 55 ? 3 : 0);
+    int awayShots = 3 + (int) (away.getAttack() / 10.0) + (homePossession < 45 ? 3 : 0);
+
+    // Shots on target based on shots and attacking efficiency
+    int homeShotsOnTarget = (int) Math.round(homeShots * (0.3 + (home.getAttack() / 200.0)));
+    int awayShotsOnTarget = (int) Math.round(awayShots * (0.3 + (away.getAttack() / 200.0)));
+
+    // Add small random variance
+    homePossession += (random.nextInt(11) - 5);
+    homePossession = Math.min(100, Math.max(0, homePossession));
+
+    Statistics stats = new Statistics(
+        homePossession,
+        100 - homePossession,
+        homeShots,
+        awayShots,
+        homeShotsOnTarget,
+        awayShotsOnTarget,
+        2 + random.nextInt(8),
+        1 + random.nextInt(6),
+        5 + random.nextInt(10),
+        7 + random.nextInt(10));
+
+    return stats;
+  }
 }

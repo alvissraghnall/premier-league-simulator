@@ -15,39 +15,26 @@ public class Team {
 	public String getName() {
 		return name;
 	}
-	// void setName(String name) {
-	// 	this.name = name;
-	// }
+	
 	public String getShortName() {
 		return shortName;
 	}
-	// void setShortName(String intName) {
-	// 	this.shortName = intName;
-	// }
+	
 	public int getOverall() {
 		return overall;
 	}
-	// void setOverall(int overall) {
-	// 	this.overall = overall;
-	// }
+	
 	public int getDefence() {
 		return defence;
 	}
-	// void setDefence(int defence) {
-	// 	this.defence = defence;
-	// }
+	
 	public int getMidfield() {
 		return midfield;
 	}
-	// void setMidfield(int midfield) {
-	// 	this.midfield = midfield;
-	// }
+
 	public int getAttack() {
 		return attack;
 	}
-	// void setAttack(int attack) {
-	// 	this.attack = attack;
-	// }
 
 	public static Team getByName (Team[] teams, String teamName) {
 		return Arrays.stream(teams).filter(team -> team.getName() == teamName).toList().get(0);

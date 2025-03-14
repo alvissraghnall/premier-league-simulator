@@ -11,6 +11,8 @@ public class Statistics {
   private int awayCorners;
   private int homeFouls;
   private int awayFouls;
+  private double homeXG;
+  private double awayXG;
 
   public Statistics(
       int homePossession,
@@ -22,7 +24,10 @@ public class Statistics {
       int homeCorners,
       int awayCorners,
       int homeFouls,
-      int awayFouls) {
+      int awayFouls,
+      double homeXG,
+      double awayXG
+      ) {
     this.awayCorners = awayCorners;
     this.homePossession = homePossession;
     this.awayPossession = awayPossession;
@@ -33,6 +38,8 @@ public class Statistics {
     this.homeCorners = homeCorners;
     this.homeFouls = homeFouls;
     this.awayFouls = awayFouls;
+    this.homeXG = homeXG;
+    this.awayXG = awayXG;
   }
 
   public int getHomePossession() {

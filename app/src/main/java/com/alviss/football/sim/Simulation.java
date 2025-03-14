@@ -15,6 +15,7 @@ public class Simulation {
   private int[] goalDistribution;
   private Random random;
   private static final double HOME_ADVANTAGE = 1.2;
+  private double[] xGs = new double[2];
 
   public Simulation(Team home, Team away) {
     this.home = home;
@@ -157,6 +158,9 @@ public class Simulation {
     double homeXG = calculateExpectedGoals(home, away, true);
     double awayXG = calculateExpectedGoals(away, home, false);
 
+    xGs[0] = homeXG;
+    xGs[1] = awayXG;
+
     // Simulate special events
     Map<String, Double> events = simulateSpecialEvents();
 
@@ -228,7 +232,7 @@ public class Simulation {
 
     // Base possession on midfield ratings
     double totalMidfield = home.getMidfield() + away.getMidfield();
-    int homePossession = (int) Math.round((home.getMidfield() / totalMidfield) * 100);
+    int homePossession = (int) Math.round(((home.getMidfield() / totalMidfield) + random.nextInt(-20, 20) )  * 100);
 
     // Shots based on attack ratings and possession
     int homeShots = 5 + (int) (home.getAttack() / 10.0) + (homePossession > 55 ? 3 : 0);
@@ -252,7 +256,10 @@ public class Simulation {
         2 + random.nextInt(8),
         1 + random.nextInt(6),
         5 + random.nextInt(10),
-        7 + random.nextInt(10));
+        7 + random.nextInt(10),
+        xGs[0],
+        xGs[1]
+        );
 
     return stats;
   }

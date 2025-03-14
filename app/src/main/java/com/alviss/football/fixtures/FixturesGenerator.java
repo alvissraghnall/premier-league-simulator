@@ -4,6 +4,11 @@ import java.util.*;
 
 public class FixturesGenerator {
     private final List<Team> teamsList = new ArrayList<>();
+    private final Team[] teams;
+
+    public FixturesGenerator (Team[] teams) {
+        this.teams = teams;
+    }
 //
 //    public List<List<Match>> generate(Team[] teams) {
 //        final List<List<Match>> fixtures = new LinkedList<>();
@@ -63,8 +68,8 @@ public class FixturesGenerator {
 //    }
 
 
-    public List<List<Match>> generate(Team[] teams) {
-        final List<List<Match>> fixtures = new LinkedList<>();
+    public List<MatchDay> generate() {
+        final List<MatchDay> fixtures = new LinkedList<>();
 
         teamsList.addAll(Arrays.asList(teams));
 
@@ -83,7 +88,8 @@ public class FixturesGenerator {
         for (int x = 0; x < 2; x++) {
 
             for (int round = 0; round < rounds; round++) {
-                final List<Match> roundPairings = new ArrayList<>();
+                //final List<Match> roundPairings = new ArrayList<>();
+                final MatchDay roundPairings = new MatchDay(round);
 
                 final List<Integer> newPlayerIndexes = new ArrayList<>();
                 newPlayerIndexes.add(0);
@@ -99,7 +105,7 @@ public class FixturesGenerator {
                     } else {
                         currentFixture = new Match(teamsList.get(secondHalf.get(i)), teamsList.get(firstHalf.get(i)));
                     }
-                    roundPairings.add(currentFixture);
+                    roundPairings.addMatch(currentFixture);
                 }
 
                 // rotating the list

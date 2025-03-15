@@ -17,29 +17,34 @@ import java.io.IOException;
 @Component
 public class FixturesApplication {
 
-    public static String[] teamsArray = new String[20];
+  public static String[] teamsArray = new String[20];
 
-    private Team[] teams;
+  private Team[] teams;
 
-    private ObjectMapper objectMapper;
-    private MappingJackson2HttpMessageConverter springMvcJacksonConverter;
+  private ObjectMapper objectMapper;
+  private MappingJackson2HttpMessageConverter springMvcJacksonConverter;
 
-    @Value("classpath:json/teams.json")
-    private Resource teamsFile;
+  @Value("classpath:json/teams.json")
+  private Resource teamsFile;
 
-    private ApplicationContext ctx;
+  private ApplicationContext ctx;
 
-    public FixturesApplication(MappingJackson2HttpMessageConverter springMvcJacksonConverter, final ApplicationContext ctx, Team[] fillTeams) throws IOException {
-        this.ctx = ctx;
-        this.objectMapper = springMvcJacksonConverter.getObjectMapper();
-        System.out.println("====\n\n\n" + this.objectMapper);
-        this.teams = fillTeams;
-    }
+  public FixturesApplication(MappingJackson2HttpMessageConverter springMvcJacksonConverter,
+      final ApplicationContext ctx, Team[] fillTeams) throws IOException {
+    this.ctx = ctx;
+    this.objectMapper = springMvcJacksonConverter.getObjectMapper();
+    System.out.println("====\n\n\n" + this.objectMapper);
+    this.teams = fillTeams;
+  }
 
-    public List<List<Result>> simulate() {
-        // this.teams = fillTeams();
+  public List<List<Result>> simulate(int numOfDays) {
+    // this.teams = fillTeams();
 
-        System.out.println("====\n\n\n" + this.objectMapper);
-        return SimulationApplication.simulate(teams);
-    }
+    System.out.println("====\n\n\n" + this.objectMapper);
+
+    FixturesGenerator fixturesGenerator = new FixturesGenerator(teams);
+
+    SimulationApplication simApp = new SimulationApplication(teams, fixturesGenerator);
+    return simApp.simulate(numOfDays);
+  }
 }

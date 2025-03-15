@@ -13,10 +13,17 @@ import java.util.Map;
 
 public class SimulationApplication {
 
+  private Team[] teams;
   private int currentMatchDay;
   private LeagueTable leagueTable;
+  private List<MatchDay> fixtures;
 
-  public static List<List<Result>> simulate(Team[] teams) {
+  public SimulationApplication(Team[] teams, FixturesGenerator fixgen) {
+    this.teams = teams;
+    this.fixtures = fixgen.generate();
+  }
+
+  public List<List<Result>> simulate(int numOfDays) {
     Simulation sim;
     Map<Team, Integer> score;
     Statistics stats;

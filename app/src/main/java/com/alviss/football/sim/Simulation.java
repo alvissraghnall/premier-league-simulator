@@ -199,30 +199,6 @@ public class Simulation {
   }
 
   /**
-   * Simulates multiple matches between these teams and returns average score
-   * Useful for season predictions
-   * 
-   * @param numberOfSimulations Number of matches to simulate
-   * @return Average scores for both teams
-   */
-  public Map<Team, Double> simulateMultipleMatches(int numberOfSimulations) {
-    Map<Team, Double> averageScores = new HashMap<>();
-    int totalHomeGoals = 0;
-    int totalAwayGoals = 0;
-
-    for (int i = 0; i < numberOfSimulations; i++) {
-      Map<Team, Integer> matchResult = computeScore();
-      totalHomeGoals += matchResult.get(home);
-      totalAwayGoals += matchResult.get(away);
-    }
-
-    averageScores.put(home, totalHomeGoals / (double) numberOfSimulations);
-    averageScores.put(away, totalAwayGoals / (double) numberOfSimulations);
-
-    return averageScores;
-  }
-
-  /**
    * Returns match statistics beyond just the score
    * 
    * @return Statistics with various match statistics
@@ -232,7 +208,7 @@ public class Simulation {
 
     // Base possession on midfield ratings
     double totalMidfield = home.getMidfield() + away.getMidfield();
-    int homePossession = (int) Math.round(((home.getMidfield() / totalMidfield) + random.nextInt(-20, 20) )  * 100);
+    int homePossession = (int) Math.round(((home.getMidfield() / totalMidfield) + random.nextInt(-20, 20)) * 100);
 
     // Shots based on attack ratings and possession
     int homeShots = 5 + (int) (home.getAttack() / 10.0) + (homePossession > 55 ? 3 : 0);
@@ -258,8 +234,7 @@ public class Simulation {
         5 + random.nextInt(10),
         7 + random.nextInt(10),
         xGs[0],
-        xGs[1]
-        );
+        xGs[1]);
 
     return stats;
   }

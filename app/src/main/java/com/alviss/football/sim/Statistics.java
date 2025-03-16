@@ -26,8 +26,7 @@ public class Statistics {
       int homeFouls,
       int awayFouls,
       double homeXG,
-      double awayXG
-      ) {
+      double awayXG) {
     this.awayCorners = awayCorners;
     this.homePossession = homePossession;
     this.awayPossession = awayPossession;
@@ -80,5 +79,13 @@ public class Statistics {
 
   public int getAwayCorners() {
     return awayCorners;
+  }
+
+  public double getHomeXG() {
+    return homeXG;
+  }
+
+  public double getAwayXG() {
+    return awayXG;
   }
 }

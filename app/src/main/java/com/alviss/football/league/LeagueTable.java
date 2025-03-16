@@ -4,6 +4,7 @@ import com.alviss.football.fixtures.Team;
 import com.alviss.football.sim.Result;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,96 +12,118 @@ import java.util.Map;
 public class LeagueTable {
 
   private List<List<Result>> results;
+  private Map<Team, LeagueData> cachedTeamDataMap;
 
   public LeagueTable(List<List<Result>> results) {
     this.results = results;
+    cachedTeamDataMap = null;
   }
 
   public Map<Team, LeagueData> generate() {
+    if (cachedTeamDataMap != null) {
+      return cachedTeamDataMap;
+    }
 
     Map<Team, LeagueData> teamDataMap = new HashMap<>();
 
     for (List<Result> roundResults : results) {
       for (Result result : roundResults) {
-        Team homeTeam = result.getMatch().getHomeTeam();
-        Team awayTeam = result.getMatch().getAwayTeam();
-
-        int homeScore = result.getScore().get(homeTeam);
-        int awayScore = result.getScore().get(awayTeam);
-
-        // update home team data
-        LeagueData homeTeamData = teamDataMap.computeIfAbsent(homeTeam, k -> new LeagueData());
-        homeTeamData.setPlayed(homeTeamData.getPlayed() + 1);
-        homeTeamData.setGoalsFor(homeTeamData.getGoalsFor() + homeScore);
-        homeTeamData.setGoalsAgainst(homeTeamData.getGoalsAgainst() + awayScore);
-        homeTeamData.setGoalsDifference(homeTeamData.getGoalsFor() - homeTeamData.getGoalsAgainst());
-        if (homeScore > awayScore) {
-          homeTeamData.setWins(homeTeamData.getWins() + 1);
-          homeTeamData.setPoints(homeTeamData.getPoints() + 3);
-          FixedSizeDeque<Form> form = homeTeamData.getForm();
-          form.add(Form.W);
-          homeTeamData.setForm(form);
-        } else if (homeScore == awayScore) {
-          homeTeamData.setDraws(homeTeamData.getDraws() + 1);
-          homeTeamData.setPoints(homeTeamData.getPoints() + 1);
-          FixedSizeDeque<Form> form = homeTeamData.getForm();
-          form.add(Form.D);
-          homeTeamData.setForm(form);
-        } else {
-          homeTeamData.setLosses(homeTeamData.getLosses() + 1);
-          FixedSizeDeque<Form> form = homeTeamData.getForm();
-          form.add(Form.L);
-          homeTeamData.setForm(form);
-        }
-        // update away team data (similar to home team data)
-        LeagueData awayTeamData = teamDataMap.computeIfAbsent(awayTeam, k -> new LeagueData());
-        awayTeamData.setPlayed(awayTeamData.getPlayed() + 1);
-        awayTeamData.setGoalsFor(awayTeamData.getGoalsFor() + awayScore);
-        awayTeamData.setGoalsAgainst(awayTeamData.getGoalsAgainst() + awayScore);
-        awayTeamData.setGoalsDifference(awayTeamData.getGoalsFor() - awayTeamData.getGoalsAgainst());
-        if (awayScore > homeScore) {
-          awayTeamData.setWins(awayTeamData.getWins() + 1);
-          awayTeamData.setPoints(awayTeamData.getPoints() + 3);
-          FixedSizeDeque<Form> form = awayTeamData.getForm();
-          form.add(Form.W);
-          awayTeamData.setForm(form);
-        } else if (homeScore == awayScore) {
-          awayTeamData.setDraws(awayTeamData.getDraws() + 1);
-          awayTeamData.setPoints(awayTeamData.getPoints() + 1);
-          FixedSizeDeque<Form> form = awayTeamData.getForm();
-          form.add(Form.D);
-          awayTeamData.setForm(form);
-        } else {
-          awayTeamData.setLosses(awayTeamData.getLosses() + 1);
-          FixedSizeDeque<Form> form = awayTeamData.getForm();
-          form.add(Form.L);
-          awayTeamData.setForm(form);
-        }
+        processResult(teamDataMap, result);
       }
     }
 
+    cachedTeamDataMap = teamDataMap;
     return teamDataMap;
+  }
 
+  private Comparator<Team> createTeamComparator(Map<Team, LeagueData> teamLeagueDataMap) {
+    return Comparator.<Team, Integer>comparing(team -> teamLeagueDataMap.get(team).getPoints())
+        .reversed()
+        .thenComparing(team -> teamLeagueDataMap.get(team).getGoalsDifference(), Comparator.reverseOrder())
+        .thenComparing(team -> teamLeagueDataMap.get(team).getGoalsFor(), Comparator.reverseOrder())
+        .thenComparing(team -> team.getName());
+  }
+
+  public List<Team> getTopTeams(int count) {
+    List<Team> sortedTeams = getSortedTeamsList();
+    return sortedTeams.subList(0, Math.min(count, sortedTeams.size()));
+  }
+
+  public List<Team> getBottomTeams(int count) {
+    List<Team> sortedTeams = getSortedTeamsList();
+    int start = Math.max(0, sortedTeams.size() - count);
+    return sortedTeams.subList(start, sortedTeams.size());
+  }
+
+  private void processResult(Map<Team, LeagueData> teamDataMap, Result result) {
+    Team homeTeam = result.getMatch().getHomeTeam();
+    Team awayTeam = result.getMatch().getAwayTeam();
+
+    int homeScore = result.getScore().get(homeTeam);
+    int awayScore = result.getScore().get(awayTeam);
+
+    updateTeamData(teamDataMap, homeTeam, homeScore, awayScore);
+
+    updateTeamData(teamDataMap, awayTeam, awayScore, homeScore);
+  }
+
+  private void updateTeamData(Map<Team, LeagueData> teamDataMap, Team team, int goalsFor,
+      int goalsAgainst) {
+    LeagueData teamData = teamDataMap.computeIfAbsent(team, k -> new LeagueData());
+
+    teamData.setPlayed(teamData.getPlayed() + 1);
+    teamData.setGoalsFor(teamData.getGoalsFor() + goalsFor);
+    teamData.setGoalsAgainst(teamData.getGoalsAgainst() + goalsAgainst);
+    teamData.setGoalsDifference(teamData.getGoalsFor() - teamData.getGoalsAgainst());
+
+    FixedSizeDeque<Form> form = teamData.getForm();
+    if (goalsFor > goalsAgainst) {
+      teamData.setWins(teamData.getWins() + 1);
+      teamData.setPoints(teamData.getPoints() + 3);
+      form.add(Form.W);
+    } else if (goalsFor == goalsAgainst) {
+      teamData.setDraws(teamData.getDraws() + 1);
+      teamData.setPoints(teamData.getPoints() + 1);
+      form.add(Form.D);
+    } else {
+      teamData.setLosses(teamData.getLosses() + 1);
+      form.add(Form.L);
+    }
+
+    teamData.setForm(form);
   }
 
   public List<Team> getSortedTeamsList() {
     Map<Team, LeagueData> teamLeagueDataMap = generate();
     List<Team> sortedTeams = new ArrayList<>(teamLeagueDataMap.keySet());
-    sortedTeams.sort((team1, team2) -> {
-      LeagueData team1Data = teamLeagueDataMap.get(team1);
-      LeagueData team2Data = teamLeagueDataMap.get(team2);
-      int pointsDiff = team2Data.getPoints() - team1Data.getPoints();
-      if (pointsDiff != 0) {
-        return pointsDiff;
-      } else {
-        int goalDiff = team2Data.getGoalsDifference() - team1Data.getGoalsDifference();
-        if (goalDiff != 0) {
-          return goalDiff;
-        } else {
-          return team2Data.getGoalsFor() - team1Data.getGoalsFor();
-        }
-      }
-    });
+
+    sortedTeams.sort(createTeamComparator(teamLeagueDataMap));
+
     return sortedTeams;
   }
+
+  public void printTable() {
+    List<Team> sortedTeams = getSortedTeamsList();
+    Map<Team, LeagueData> dataMap = generate();
+
+    System.out.println(String.format("%-20s %3s %3s %3s %3s %3s %3s %3s %3s",
+        "Team", "P", "W", "D", "L", "GF", "GA", "GD", "Pts"));
+    System.out.println("-".repeat(60));
+
+    for (int i = 0; i < sortedTeams.size(); i++) {
+      Team team = sortedTeams.get(i);
+      LeagueData data = dataMap.get(team);
+      System.out.println(String.format("%-20s %3d %3d %3d %3d %3d %3d %3d %3d",
+          (i + 1) + ". " + team.getName(),
+          data.getPlayed(),
+          data.getWins(),
+          data.getDraws(),
+          data.getLosses(),
+          data.getGoalsFor(),
+          data.getGoalsAgainst(),
+          data.getGoalsDifference(),
+          data.getPoints()));
+    }
+  }
+
 }

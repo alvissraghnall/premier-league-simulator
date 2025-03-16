@@ -17,10 +17,14 @@ public class SimulationApplication {
   private int currentMatchDay;
   private LeagueTable leagueTable;
   private List<MatchDay> fixtures;
+  final List<List<Result>> fixturesWithScores;
 
   public SimulationApplication(Team[] teams, FixturesGenerator fixgen) {
     this.teams = teams;
     this.fixtures = fixgen.generate();
+    this.fixturesWithScores = new LinkedList<>();
+    this.currentMatchDay = 0;
+    this.leagueTable = new LeagueTable(fixturesWithScores);
   }
 
   public List<List<Result>> simulate(int numOfDays) {
@@ -29,9 +33,6 @@ public class SimulationApplication {
     Statistics stats;
     Result result;
     final List<List<Result>> fixturesWithScores = new LinkedList<>();
-
-    FixturesGenerator fixgen = new FixturesGenerator(teams);
-    List<MatchDay> fixtures = fixgen.generate();
 
     for (MatchDay roundFixtures : fixtures) {
       List<Result> matchDay = new ArrayList<>();
@@ -46,6 +47,22 @@ public class SimulationApplication {
       // System.out.println(matchDay.size());
       fixturesWithScores.add(matchDay);
     }
+    return fixturesWithScores;
+  }
+
+  public int getTotalMatchDays() {
+    return fixtures.size();
+  }
+
+  public int getCurrentMatchDay() {
+    return currentMatchDay;
+  }
+
+  public LeagueTable getLeagueTable() {
+    return leagueTable;
+  }
+
+  public List<List<Result>> getSimulatedResults() {
     return fixturesWithScores;
   }
 }

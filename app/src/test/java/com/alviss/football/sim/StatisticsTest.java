@@ -25,7 +25,7 @@ public class StatisticsTest {
     assertEquals(2, statistics.getAwayCorners());
     assertEquals(10, statistics.getHomeFouls());
     assertEquals(12, statistics.getAwayFouls());
-    assertEquals(2.3, statistics.getHoomeXG());
+    assertEquals(2.3, statistics.getHomeXG());
     assertEquals(1.1, statistics.getAwayXG());
   }
 

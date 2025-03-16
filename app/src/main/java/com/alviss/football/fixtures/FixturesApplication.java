@@ -2,6 +2,7 @@ package com.alviss.football.fixtures;
 
 import java.util.*;
 
+import com.alviss.football.league.LeagueTable;
 import com.alviss.football.sim.Result;
 //import com.fasterxml.jackson.core.JsonParseException;
 import com.alviss.football.sim.SimulationApplication;
@@ -29,22 +30,33 @@ public class FixturesApplication {
 
   private ApplicationContext ctx;
 
+  private final FixturesGenerator fixGen;
+  private final SimulationApplication simApp;
+
   public FixturesApplication(MappingJackson2HttpMessageConverter springMvcJacksonConverter,
       final ApplicationContext ctx, Team[] fillTeams) throws IOException {
     this.ctx = ctx;
     this.objectMapper = springMvcJacksonConverter.getObjectMapper();
     System.out.println("====\n\n\n" + this.objectMapper);
     this.teams = fillTeams;
+    this.fixGen = new FixturesGenerator(teams);
+    this.simApp = new SimulationApplication(teams, fixGen);
   }
 
-  public List<List<Result>> simulate(int numOfDays) {
+  public LeagueTable simulate(int numOfDays) {
     // this.teams = fillTeams();
 
     System.out.println("====\n\n\n" + this.objectMapper);
 
-    FixturesGenerator fixturesGenerator = new FixturesGenerator(teams);
+    SimulationApplication simApp = new SimulationApplication(teams, fixGen);
+    simApp.simulate(numOfDays);
+    return simApp.getLeagueTable();
+  }
 
-    SimulationApplication simApp = new SimulationApplication(teams, fixturesGenerator);
-    return simApp.simulate(numOfDays);
+  public LeagueTable simulate() {
+
+    SimulationApplication simApp = new SimulationApplication(teams, fixGen);
+    simApp.simulateRemainder();
+    return simApp.getLeagueTable();
   }
 }

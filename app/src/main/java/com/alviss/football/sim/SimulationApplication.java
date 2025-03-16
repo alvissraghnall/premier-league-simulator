@@ -27,27 +27,39 @@ public class SimulationApplication {
     this.leagueTable = new LeagueTable(fixturesWithScores);
   }
 
-  public List<List<Result>> simulate(int numOfDays) {
-    Simulation sim;
-    Map<Team, Integer> score;
-    Statistics stats;
-    Result result;
-    final List<List<Result>> fixturesWithScores = new LinkedList<>();
+  public void simulate(int numOfDays) {
+    int daysToSimulate = Math.min(numOfDays, fixtures.size() - currentMatchDay);
+    // List<List<Result>> simulatedResults = new LinkedList<>();
 
-    for (MatchDay roundFixtures : fixtures) {
-      List<Result> matchDay = new ArrayList<>();
-      for (Match match : roundFixtures.getMatches()) {
-        sim = new Simulation(match.getHomeTeam(), match.getAwayTeam());
-        score = sim.computeScore();
-        stats = sim.getMatchStatistics();
-        result = new Result(match, score, stats);
+    for (int i = 0; i < daysToSimulate; i++) {
+      MatchDay roundFixtures = fixtures.get(currentMatchDay);
+      List<Result> matchDay = simulateMatchDay(roundFixtures);
 
-        matchDay.add(result);
-      }
-      // System.out.println(matchDay.size());
       fixturesWithScores.add(matchDay);
+      // simulatedResults.add(matchDay);
+      currentMatchDay++;
     }
-    return fixturesWithScores;
+
+    this.leagueTable = new LeagueTable(fixturesWithScores);
+
+    // return simulatedResults;
+  }
+
+  private List<Result> simulateMatchDay(MatchDay roundFixtures) {
+    List<Result> matchDay = new ArrayList<>();
+    for (Match match : roundFixtures.getMatches()) {
+      Simulation sim = new Simulation(match.getHomeTeam(), match.getAwayTeam());
+      Map<Team, Integer> score = sim.computeScore();
+      Statistics stats = sim.getMatchStatistics();
+      Result result = new Result(match, score, stats);
+
+      matchDay.add(result);
+    }
+    return matchDay;
+  }
+
+  public void simulateRemainder() {
+    simulate(fixtures.size() - currentMatchDay);
   }
 
   public int getTotalMatchDays() {

@@ -54,7 +54,7 @@ public class HomeController {
         model.addAttribute("simulatedDays", days);
       } else {
         model.addAttribute("teamDataList", homeService.simulate());
-        model.addAttribute("simulatedDays", "all remaining");
+        model.addAttribute("simulatedDays", "all");
       }
 
       return "simulate";

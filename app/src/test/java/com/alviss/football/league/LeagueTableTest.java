@@ -1,7 +1,6 @@
 package com.alviss.football.league;
 
 import com.alviss.football.fixtures.Team;
-import com.alviss.football.sim.SimulationApplicationTest;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.annotation.Testable;
 

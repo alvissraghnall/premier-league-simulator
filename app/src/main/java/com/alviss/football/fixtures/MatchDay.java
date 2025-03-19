@@ -11,6 +11,10 @@ public class MatchDay {
         this.number = number;
         this.matches = new ArrayList<>();
     }
+
+	public MatchDay (List<Match> matches) {
+		this.matches = matches;
+	}
     
     public void addMatch(Match match) {
         matches.add(match);
